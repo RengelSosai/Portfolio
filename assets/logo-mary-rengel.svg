@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <!-- Sphere Radial Gradient -->
+    <radialGradient id="blueOrb" cx="38%" cy="30%" r="65%" fx="35%" fy="25%">
+      <stop offset="0%" stop-color="#0051a8" />
+      <stop offset="40%" stop-color="#003577" />
+      <stop offset="80%" stop-color="#001d4a" />
+      <stop offset="100%" stop-color="#000e29" />
+    </radialGradient>
+
+    <!-- Glass Specular Highlight Gradient -->
+    <linearGradient id="glassGlare" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.65" />
+      <stop offset="30%" stop-color="#ffffff" stop-opacity="0.15" />
+      <stop offset="70%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+
+    <!-- Edge Rim Glow Filter -->
+    <filter id="orbGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <style>
+    .serif-m {
+      font-family: 'Playfair Display', 'Cinzel', 'Bodoni MT', 'Didot', 'Georgia', serif;
+      font-weight: 700;
+      font-size: 175px;
+      fill: #ffffff;
+    }
+    .serif-name {
+      font-family: 'Cinzel', 'Playfair Display', 'Georgia', serif;
+      font-weight: 500;
+      font-size: 20px;
+      fill: #ffffff;
+      letter-spacing: 7px;
+    }
+    .floral-line {
+      fill: none;
+      stroke: rgba(10, 20, 40, 0.85);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .floral-line-light {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.4);
+      stroke-width: 1.2;
+    }
+  </style>
+
+  <!-- Outer Drop Shadow Circle -->
+  <circle cx="200" cy="205" r="175" fill="#000b1e" opacity="0.4" filter="url(#orbGlow)" />
+
+  <!-- Main 3D Sphere Badge -->
+  <circle cx="200" cy="200" r="175" fill="url(#blueOrb)" stroke="#1a60b0" stroke-width="2" />
+
+  <!-- Glass Rim Inner Highlight Ring -->
+  <circle cx="200" cy="200" r="173" fill="none" stroke="url(#glassGlare)" stroke-width="4" opacity="0.8" />
+  <circle cx="198" cy="198" r="169" fill="none" stroke="#ffffff" stroke-width="1.5" opacity="0.35" />
+
+  <!-- Floral Line Art (Peony & Rose Motifs overlaying behind the M) -->
+  <g class="floral-group" transform="translate(10, -5)">
+    <!-- Peony Flower Center & Petals -->
+    <path class="floral-line" d="M190 120 C180 110, 175 125, 185 135 C195 145, 210 135, 200 120 Z" />
+    <path class="floral-line" d="M175 115 C160 100, 155 130, 170 145 C185 160, 215 150, 210 125 C205 100, 185 105, 175 115 Z" />
+    <path class="floral-line" d="M160 105 C140 90, 140 135, 160 155 C180 175, 230 165, 225 130 C220 95, 180 90, 160 105 Z" />
+    <path class="floral-line" d="M150 95 C125 75, 125 145, 150 170 C175 195, 245 175, 235 120 C225 75, 170 70, 150 95 Z" />
+    
+    <!-- Leaves and Stems intertwining with M -->
+    <path class="floral-line" d="M135 150 Q110 165 95 185 Q115 195 140 170 Z" />
+    <path class="floral-line" d="M225 105 Q250 90 270 85 Q260 110 230 120 Z" />
+    <path class="floral-line" d="M165 80 Q160 55 175 40 Q185 60 175 85 Z" />
+    
+    <!-- Delicate Inner Petal Detail Lines -->
+    <path class="floral-line-light" d="M185 125 C180 120, 180 130, 190 130" />
+    <path class="floral-line-light" d="M170 130 C165 120, 170 140, 185 140" />
+    <path class="floral-line-light" d="M200 115 Q210 125 205 140" />
+  </g>
+
+  <!-- Capital Serif Letter "M" -->
+  <text x="200" y="240" text-anchor="middle" class="serif-m">M</text>
+
+  <!-- Foreground Layered Floral Stems overlapping M stroke -->
+  <g transform="translate(10, -5)">
+    <path class="floral-line" d="M180 145 C165 160, 195 180, 215 165" stroke-width="2" />
+    <path class="floral-line" d="M160 170 C145 185, 175 205, 195 190" stroke-width="1.8" />
+  </g>
+
+  <!-- Subtitle Text: MARY RENGEL -->
+  <text x="204" y="302" text-anchor="middle" class="serif-name">MARY RENGEL</text>
+
+  <!-- Top Glass Highlight Curved Crescent -->
+  <path d="M70 100 A165 165 0 0 1 330 100 A173 173 0 0 0 70 100 Z" fill="url(#glassGlare)" opacity="0.45" />
+</svg>
