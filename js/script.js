@@ -101,12 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target); // Fire once
+      } else {
+        entry.target.classList.remove('visible'); // Re-triggers animation every time element scrolls into view!
       }
     });
   }, {
     threshold: 0.12,
-    rootMargin: '0px 0px -40px 0px'
+    rootMargin: '0px 0px -30px 0px'
   });
 
   document.querySelectorAll('.reveal').forEach(el => {
