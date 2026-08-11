@@ -1720,28 +1720,20 @@ button, input, textarea {
   object-fit: contain;
 }
 
-/* About/profile picture subtle floating animation */
+/* About/profile picture hover-only effect */
 .window-body img {
   display: block;
   max-width: 100%;
   height: auto;
   border-radius: 12px;
   box-shadow: 0 18px 40px rgba(2,6,23,0.24);
-  animation: floaty 6s ease-in-out infinite;
   transition: transform 0.32s ease, box-shadow 0.32s ease;
+  will-change: transform;
 }
 
 .window-body img:hover {
   transform: translateY(-6px) scale(1.02);
   box-shadow: 0 26px 60px rgba(2,6,23,0.32);
-}
-
-@keyframes floaty {
-  0% { transform: translateY(0) rotate(0deg); }
-  25% { transform: translateY(-6px) rotate(-0.6deg); }
-  50% { transform: translateY(-10px) rotate(-1deg); }
-  75% { transform: translateY(-6px) rotate(-0.6deg); }
-  100% { transform: translateY(0) rotate(0deg); }
 }
 
 /* CV Document Viewer Modal Styles */
