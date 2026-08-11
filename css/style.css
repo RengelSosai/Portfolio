@@ -1617,17 +1617,18 @@ button, input, textarea {
   color: #101e33;
   border-radius: 24px;
   max-width: 920px;
-  width: 94%;
-  max-height: 90vh;
+  width: min(94%, 920px);
+  max-height: calc(100vh - 2rem);
+  min-height: 40vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.5rem 1.5rem 1.75rem 1.5rem;
+  padding: 1.25rem 1.25rem 1.5rem 1.25rem;
   box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.6), 0 0 40px rgba(37, 99, 235, 0.25);
   border: 1px solid var(--border-light);
   transform: scale(0.92) translateY(20px);
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.4s ease;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .modal.active .modal-content {
@@ -1693,13 +1694,13 @@ button, input, textarea {
 }
 
 .modal-img-wrap {
-  flex: 1;
+  flex: none;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  min-height: 0;
   width: 100%;
+  max-height: calc(100vh - 12rem);
 }
 
 /* Ensure modal action buttons are centered */
@@ -1709,11 +1710,12 @@ button, input, textarea {
   justify-content: center;
   gap: 0.5rem;
   margin-top: 1rem;
+  flex-wrap: wrap;
 }
 
 #modalImg {
   max-width: 100%;
-  max-height: 72vh;
+  max-height: 100%;
   width: auto;
   height: auto;
   margin: 0 auto;
@@ -1721,6 +1723,29 @@ button, input, textarea {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   display: block;
   object-fit: contain;
+}
+
+@media (max-width: 640px) {
+  .modal {
+    padding: 0.75rem;
+  }
+
+  .modal-content {
+    width: min(calc(100% - 1.5rem), 100%);
+    padding: 1rem;
+    max-height: calc(100vh - 1rem);
+  }
+
+  #modalTitle {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .modal-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.85rem;
+  }
 }
 
 /* About/profile picture hover-only effect */
@@ -2042,6 +2067,11 @@ body {
   
   .about-highlights-grid, .edu-grid, .cert-grid, .projects-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cert-card:hover .cert-preview img,
+  .cert-card.active-hover-demo .cert-preview img {
+    transform: rotate(0deg) translate(0, 0) scale(1);
   }
   
   .exp-grid {
