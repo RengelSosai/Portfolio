@@ -189,49 +189,6 @@ button, input, textarea {
   color: var(--text-white);
 }
 
-/* ── Dark Mode Toggle Button ── */
-.theme-toggle {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1.5px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.15rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-}
-
-.theme-toggle::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(245, 176, 39, 0.3) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.theme-toggle:hover {
-  background: rgba(245, 176, 39, 0.2);
-  border-color: var(--text-accent-gold);
-  transform: rotate(20deg) scale(1.1);
-  box-shadow: 0 0 18px rgba(245, 176, 39, 0.4);
-}
-
-.theme-toggle:hover::before {
-  opacity: 1;
-}
-
-[data-theme="dark"] .theme-toggle {
-  background: rgba(245, 176, 39, 0.15);
-  border-color: rgba(245, 176, 39, 0.4);
-}
 
 /* ── Scroll-to-top button ── */
 .scroll-top-btn {
@@ -379,7 +336,43 @@ button, input, textarea {
   cursor: pointer;
 }
 
-/* Hero Section */
+/* ── Dark / Light Theme Toggle Button ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: rgba(245, 176, 39, 0.2);
+  border-color: var(--text-accent-gold);
+  transform: rotate(20deg) scale(1.1);
+  box-shadow: 0 0 14px rgba(245, 176, 39, 0.4);
+}
+
+/* Show moon in light mode, sun in dark mode */
+.theme-toggle .icon-moon { display: block; }
+.theme-toggle .icon-sun  { display: none; }
+
+[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+[data-theme="dark"] .theme-toggle .icon-sun  { display: block; }
+
+[data-theme="dark"] .theme-toggle {
+  background: rgba(245, 176, 39, 0.15);
+  border-color: rgba(245, 176, 39, 0.4);
+  color: var(--text-accent-gold);
+}
+
+
 .hero {
   padding-top: 7rem;
   padding-bottom: 5rem;
@@ -1763,10 +1756,23 @@ button, input, textarea {
 }
 
 /* CV Document Viewer Modal Styles */
+#cvModal {
+  z-index: 10000;
+}
+
+#cvModal .cv-document-modal {
+  transform: none;
+  max-height: min(96vh, calc(100dvh - 2rem));
+  margin: 1rem auto;
+  width: min(1200px, 98%);
+  height: min(95vh, calc(100dvh - 2rem));
+}
+
 .cv-document-modal {
-  max-width: 900px;
-  width: 95%;
-  max-height: 90vh;
+  max-width: 1500px;
+  width: 100%;
+  min-height: 80vh;
+  max-height: 95vh;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -1793,15 +1799,23 @@ button, input, textarea {
 .cv-modal-actions {
   display: flex;
   gap: 0.75rem;
-  align-items: center;
+  align-items:center;
 }
 
 .cv-modal-body {
-  padding: 2.5rem;
-  overflow-y: auto;
+  padding: 0;
+  overflow: hidden;
   font-family: var(--font-main);
   color: #1a1a1a;
   background: #ffffff;
+  display: flex;
+}
+
+.cv-pdf-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  min-height: 75vh;
 }
 
 .cv-paper {

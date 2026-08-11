@@ -5,37 +5,7 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ── 0. Theme / Dark Mode Toggle ──────────────────────────────────────────
-  const themeToggle = document.getElementById('themeToggle');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
-  const savedTheme = localStorage.getItem('portfolioTheme');
-
-  const applyTheme = (theme) => {
-    document.documentElement.setAttribute('data-theme', theme);
-    if (themeToggle) {
-      themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
-      themeToggle.setAttribute('title', theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode');
-    }
-    localStorage.setItem('portfolioTheme', theme);
-  };
-
-  // Default: use saved preference or system preference
-  if (savedTheme) {
-    applyTheme(savedTheme);
-  } else if (prefersDark.matches) {
-    applyTheme('dark');
-  } else {
-    applyTheme('light');
-  }
-
-  if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      applyTheme(current === 'dark' ? 'light' : 'dark');
-    });
-  }
-
-  // ── 1. Mobile Menu Toggle ─────────────────────────────────────────────────
+  // ── 0. Mobile Menu Toggle ─────────────────────────────────────────────────
   const mobileToggle = document.getElementById('mobileToggle');
   const navLinks = document.getElementById('navLinks');
 
@@ -48,6 +18,26 @@ document.addEventListener('DOMContentLoaded', () => {
       link.addEventListener('click', () => {
         navLinks.classList.remove('active');
       });
+    });
+  }
+
+  // ── 1. Dark / Light Theme Toggle ──────────────────────────────────────────
+  const themeToggle = document.getElementById('themeToggle');
+  const savedTheme = localStorage.getItem('portfolioTheme') || 'dark';
+
+  // Apply saved theme on load
+  document.documentElement.setAttribute('data-theme', savedTheme);
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', newTheme);
+      localStorage.setItem('portfolioTheme', newTheme);
+
+      // Spin animation on click
+      themeToggle.style.transform = 'rotate(360deg) scale(1.2)';
+      setTimeout(() => { themeToggle.style.transform = ''; }, 400);
     });
   }
 
@@ -203,16 +193,37 @@ document.addEventListener('DOMContentLoaded', () => {
   const cvModalClose = document.getElementById('cvModalClose');
   const printCvBtn = document.getElementById('printCvBtn');
   const backCvBtn = document.getElementById('backCvBtn');
+  const viewCvBtn = document.getElementById('viewCvBtn');
+  const heroViewCvBtn = document.getElementById('heroViewCvBtn');
+  const downloadCvBtn = document.getElementById('downloadCvBtn');
+  const cvFileName = 'Mary_Rengel_Sosai_CV.pdf';
+
+  const openCvModal = () => {
+    if (!cvModal) return;
+    cvModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  };
+
+  const closeCvModal = () => {
+    if (!cvModal) return;
+    cvModal.classList.remove('active');
+    document.body.style.overflow = '';
+  };
+
+  if (viewCvBtn) viewCvBtn.addEventListener('click', openCvModal);
+  if (heroViewCvBtn) heroViewCvBtn.addEventListener('click', openCvModal);
 
   if (cvModalClose && cvModal) {
-    cvModalClose.addEventListener('click', () => { cvModal.style.display = 'none'; document.body.style.overflow = ''; });
-    cvModal.addEventListener('click', (e) => { if (e.target === cvModal) { cvModal.style.display = 'none'; document.body.style.overflow = ''; } });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && cvModal.style.display === 'flex') { cvModal.style.display = 'none'; document.body.style.overflow = ''; } });
+    cvModalClose.addEventListener('click', closeCvModal);
+    cvModal.addEventListener('click', (e) => { if (e.target === cvModal) closeCvModal(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && cvModal.classList.contains('active')) closeCvModal();
+    });
   }
 
   if (backCvBtn) {
     backCvBtn.addEventListener('click', () => {
-      if (cvModal) { cvModal.style.display = 'none'; document.body.style.overflow = ''; }
+      closeCvModal();
       const cvSection = document.getElementById('cv');
       if (cvSection) setTimeout(() => cvSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     });
@@ -222,67 +233,213 @@ document.addEventListener('DOMContentLoaded', () => {
     printCvBtn.addEventListener('click', () => { window.print(); });
   }
 
-  // Download CV — always save to device; never open PDF in the browser
-  const downloadCvBtn = document.getElementById('downloadCvBtn');
-  if (downloadCvBtn) {
-    const cvFileName = 'Mary_Rengel_Sosai_CV.pdf';
-    const cvUrl = new URL(cvFileName, window.location.href).href;
+  // Build a simple multi-page PDF from plain text (works with file:// — no server needed)
+  const buildTextPdf = (rawLines) => {
+    const pageWidth = 612;
+    const pageHeight = 792;
+    const margin = 48;
+    const fontSize = 10;
+    const lineHeight = 13;
+    const maxChars = 90;
 
-    const fetchCvBlob = () => new Promise((resolve, reject) => {
-      fetch(cvUrl)
-        .then((response) => {
-          if (!response.ok) throw new Error('fetch failed');
-          return response.arrayBuffer();
-        })
-        .then((buffer) => resolve(new Blob([buffer], { type: 'application/octet-stream' })))
-        .catch(() => {
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', cvUrl, true);
-          xhr.responseType = 'arraybuffer';
-          xhr.onload = () => {
-            if (xhr.status === 200 || xhr.status === 0) {
-              resolve(new Blob([xhr.response], { type: 'application/octet-stream' }));
-            } else {
-              reject(new Error('xhr failed'));
-            }
-          };
-          xhr.onerror = () => reject(new Error('xhr error'));
-          xhr.send();
-        });
-    });
-
-    const saveBlobToDevice = (blob) => {
-      if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(blob, cvFileName, false);
-        return;
+    const wrapLine = (line) => {
+      const out = [];
+      const text = String(line || '');
+      if (!text) {
+        out.push('');
+        return out;
       }
-
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = blobUrl;
-      link.download = cvFileName;
-      link.type = 'application/octet-stream';
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      link.dispatchEvent(new MouseEvent('click', { bubbles: false, cancelable: true, view: window }));
-      setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(link);
-      }, 1500);
+      let remaining = text;
+      while (remaining.length > maxChars) {
+        let breakAt = remaining.lastIndexOf(' ', maxChars);
+        if (breakAt < 20) breakAt = maxChars;
+        out.push(remaining.slice(0, breakAt));
+        remaining = remaining.slice(breakAt).trimStart();
+      }
+      out.push(remaining);
+      return out;
     };
 
+    const wrapped = rawLines.flatMap(wrapLine);
+    const linesPerPage = Math.floor((pageHeight - margin * 2) / lineHeight);
+    const pages = [];
+    for (let i = 0; i < wrapped.length; i += linesPerPage) {
+      pages.push(wrapped.slice(i, i + linesPerPage));
+    }
+    if (!pages.length) pages.push(['']);
+
+    const escapePdf = (s) => s
+      .replace(/\\/g, '\\\\')
+      .replace(/\(/g, '\\(')
+      .replace(/\)/g, '\\)')
+      .replace(/[^\x20-\x7E]/g, '?');
+
+    const objects = [];
+    const addObj = (content) => {
+      objects.push(content);
+      return objects.length;
+    };
+
+    const fontId = addObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>');
+    const boldId = addObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>');
+
+    const pageIds = [];
+    pages.forEach((pageLines) => {
+      let stream = 'BT\n';
+      pageLines.forEach((line, idx) => {
+        const y = pageHeight - margin - (idx * lineHeight);
+        const isHeading = line.trim() === 'MARY RENGEL SOSAI' ||
+          /^(PROFESSIONAL SUMMARY|EDUCATION|TECHNICAL SKILLS|PROJECTS|EXPERIENCE|CERTIFICATIONS)/i.test(line.trim());
+        const size = isHeading ? 12 : fontSize;
+        const font = isHeading ? '/F2' : '/F1';
+        stream += font + ' ' + size + ' Tf\n';
+        stream += '1 0 0 1 ' + margin + ' ' + y + ' Tm\n';
+        stream += '(' + escapePdf(line) + ') Tj\n';
+      });
+      stream += 'ET';
+
+      const contentId = addObj('<< /Length ' + stream.length + ' >>\nstream\n' + stream + '\nendstream');
+      const pageId = addObj(
+        '<< /Type /Page /Parent PAGES_ID 0 R /MediaBox [0 0 ' + pageWidth + ' ' + pageHeight + '] ' +
+        '/Contents ' + contentId + ' 0 R /Resources << /Font << /F1 ' + fontId + ' 0 R /F2 ' + boldId + ' 0 R >> >> >>'
+      );
+      pageIds.push(pageId);
+    });
+
+    const kids = pageIds.map((id) => id + ' 0 R').join(' ');
+    const pagesId = addObj('<< /Type /Pages /Kids [' + kids + '] /Count ' + pageIds.length + ' >>');
+    const catalogId = addObj('<< /Type /Catalog /Pages ' + pagesId + ' 0 R >>');
+
+    // Patch parent pages reference
+    objects.forEach((obj, i) => {
+      if (typeof obj === 'string' && obj.includes('PAGES_ID')) {
+        objects[i] = obj.replace(/PAGES_ID/g, String(pagesId));
+      }
+    });
+
+    let pdf = '%PDF-1.4\n';
+    const offsets = [0];
+    objects.forEach((obj, i) => {
+      offsets.push(pdf.length);
+      pdf += (i + 1) + ' 0 obj\n' + obj + '\nendobj\n';
+    });
+    const xrefPos = pdf.length;
+    pdf += 'xref\n0 ' + (objects.length + 1) + '\n';
+    pdf += '0000000000 65535 f \n';
+    for (let i = 1; i < offsets.length; i++) {
+      pdf += String(offsets[i]).padStart(10, '0') + ' 00000 n \n';
+    }
+    pdf += 'trailer\n<< /Size ' + (objects.length + 1) + ' /Root ' + catalogId + ' 0 R >>\n';
+    pdf += 'startxref\n' + xrefPos + '\n%%EOF';
+    return new Blob([pdf], { type: 'application/pdf' });
+  };
+
+  const collectCvLines = () => {
+    const paper = document.querySelector('.cv-paper');
+    if (!paper) {
+      return [
+        'MARY RENGEL SOSAI',
+        'Aspiring UI/UX Designer | BICT Undergraduate',
+        'Mannar, Sri Lanka | maryrengelsosai@gmail.com'
+      ];
+    }
+    const lines = [];
+    const push = (text) => {
+      const cleaned = (text || '').replace(/\s+/g, ' ').trim();
+      if (cleaned) lines.push(cleaned);
+    };
+    push(paper.querySelector('.cv-paper-name')?.textContent);
+    push(paper.querySelector('.cv-paper-title')?.textContent);
+    push(Array.from(paper.querySelectorAll('.cv-paper-contact span')).map((el) => el.textContent).join(' | '));
+    lines.push('');
+    paper.querySelectorAll('.cv-section').forEach((section) => {
+      push(section.querySelector('.cv-section-title')?.textContent);
+      section.querySelectorAll('.cv-item').forEach((item) => {
+        const headerParts = Array.from(item.querySelectorAll('.cv-item-header span')).map((el) => el.textContent.trim());
+        if (headerParts.length) push(headerParts.join(' — '));
+        push(item.querySelector('.cv-item-sub')?.textContent);
+        item.querySelectorAll('.cv-bullets li').forEach((li) => push('• ' + li.textContent));
+        lines.push('');
+      });
+      section.querySelectorAll(':scope > .cv-bullets li').forEach((li) => push('• ' + li.textContent));
+      const summary = section.querySelector(':scope > p');
+      if (summary) push(summary.textContent);
+      lines.push('');
+    });
+    return lines;
+  };
+
+  const triggerBlobDownload = (blob, fileName) => {
+    const fileBlob = new Blob([blob], { type: 'application/octet-stream' });
+    const blobUrl = URL.createObjectURL(fileBlob);
+    const link = document.createElement('a');
+    link.href = blobUrl;
+    link.download = fileName;
+    link.rel = 'noopener';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    setTimeout(() => {
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+    }, 1500);
+  };
+
+  const saveWithPicker = async (blob, fileName) => {
+    if (!window.showSaveFilePicker) return false;
+    const handle = await window.showSaveFilePicker({
+      suggestedName: fileName,
+      types: [{ description: 'PDF file', accept: { 'application/pdf': ['.pdf'] } }]
+    });
+    const writable = await handle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+    return true;
+  };
+
+  const downloadCvPdf = async () => {
+    let pdfBlob = null;
+
+    // Prefer the real PDF file when the site is served over http(s)
+    try {
+      const cvUrl = new URL(cvFileName, window.location.href).href;
+      const response = await fetch(cvUrl, { cache: 'no-store' });
+      if (response.ok) {
+        const blob = await response.blob();
+        if (blob && blob.size > 0) pdfBlob = blob;
+      }
+    } catch (_) {
+      // file:// blocks fetch — fall through to generated PDF
+    }
+
+    // Offline / file:// fallback: generate a PDF from the on-page CV content
+    if (!pdfBlob) {
+      pdfBlob = buildTextPdf(collectCvLines());
+    }
+
+    try {
+      const saved = await saveWithPicker(pdfBlob, cvFileName);
+      if (saved) {
+        showToast(`✅ Saved: ${cvFileName}`, 'success');
+        return;
+      }
+    } catch (pickerErr) {
+      if (pickerErr && pickerErr.name === 'AbortError') return;
+    }
+
+    triggerBlobDownload(pdfBlob, cvFileName);
+    showToast(`✅ Download started: ${cvFileName}`, 'success');
+  };
+
+  if (downloadCvBtn) {
     downloadCvBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
-
       downloadCvBtn.disabled = true;
-
       try {
-        const blob = await fetchCvBlob();
-        saveBlobToDevice(blob);
-        showToast(`✅ Download started: ${cvFileName}`, 'success');
+        await downloadCvPdf();
       } catch {
-        showToast('⚠️ Could not download CV. Open the site via a local server and try again.', 'warning');
+        showToast('⚠️ Could not download CV. Please try again.', 'warning');
       } finally {
         downloadCvBtn.disabled = false;
       }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -30,7 +30,24 @@
       </nav>
 
       <div style="display:flex;align-items:center;gap:0.75rem;">
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Dark Mode" title="Toggle Dark Mode">🌙</button>
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+          <!-- Moon icon (shown in light mode) -->
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 109.79 9.79z"/>
+          </svg>
+          <!-- Sun icon (shown in dark mode) -->
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+        </button>
         <button class="mobile-toggle" id="mobileToggle" aria-label="Toggle Navigation Menu">☰</button>
       </div>
     </div>
@@ -49,7 +66,7 @@
 
         <div class="hero-actions">
           <a href="#projects" class="btn btn-navy">View My Projects <span>→</span></a>
-          <a href="#cv" class="btn btn-secondary open-cv-view-btn">View My CV <span>📄</span></a>
+          <button type="button" class="btn btn-secondary" id="heroViewCvBtn">View My CV <span>📄</span></button>
         </div>
 
         <div class="social-block">
@@ -664,8 +681,8 @@
           </div>
         </div>
         <div class="cv-banner-actions">
-          <a href="Mary_Rengel_Sosai_CV.pdf" target="_blank" rel="noopener" class="btn btn-secondary">View CV 📄</a>
-          <button type="button" id="downloadCvBtn" class="btn btn-navy">Download CV <span>📥</span></button>
+          <button type="button" id="viewCvBtn" class="btn btn-secondary">View CV 📄</button>
+          <button type="button" id="downloadCvBtn" class="btn btn-navy" aria-label="Download CV PDF to your device">Download CV <span>📥</span></button>
         </div>
       </div>
     </div>
@@ -792,164 +809,29 @@
     </div>
   </footer>
 
-  <!-- Interactive CV Document Viewer Modal -->
-  <div class="modal" id="cvModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 28, 48, 0.85); z-index: 10000; justify-content: center; align-items: center; padding: 1.5rem;">
+  <!-- CV PDF Viewer Modal -->
+  <div class="modal" id="cvModal">
     <div class="cv-document-modal">
       <div class="cv-modal-header">
         <h3>📄 MARY RENGEL SOSAI — Official CV</h3>
         <div class="cv-modal-actions">
-          <button id="backCvBtn" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; background: rgba(255,255,255,0.12); color: #fff; font-weight: 700; border-radius: 6px; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.25); display:flex; align-items:center; gap:0.4rem; transition: background 0.2s;">← Back</button>
-          <button id="printCvBtn" class="btn" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; background: var(--text-accent-gold); color: #000; font-weight: 700; border-radius: 6px; cursor: pointer; border: none;">Print / Save PDF 🖨️</button>
-          <span id="cvModalClose" style="color: #ffffff; font-size: 2rem; cursor: pointer; padding: 0 0.5rem; line-height: 1;">&times;</span>
+          <button type="button" id="backCvBtn" class="btn cv-back-btn">← Back</button>
+          <span id="cvModalClose" class="cv-modal-x" role="button" aria-label="Close CV">&times;</span>
         </div>
       </div>
-      <div class="cv-modal-body">
-        <div class="cv-paper">
-          <div class="cv-paper-header">
-            <h1 class="cv-paper-name">MARY RENGEL SOSAI</h1>
-            <p class="cv-paper-title">Aspiring UI/UX Designer | BICT Undergraduate</p>
-            <div class="cv-paper-contact">
-              <span>📍 Mannar, Sri Lanka</span>
-              <span>✉ <a href="mailto:maryrengelsosai@gmail.com">maryrengelsosai@gmail.com</a></span>
-              <span>🔗 <a href="https://linkedin.com/in/maryrengelsosai" target="_blank" rel="noopener">LinkedIn</a></span>
-              <span>💻 <a href="https://github.com/RengelSosai" target="_blank" rel="noopener">GitHub</a></span>
-              <span>🎨 <a href="https://behance.net" target="_blank" rel="noopener">Behance</a></span>
-            </div>
-          </div>
-
-          <!-- Professional Summary -->
-          <div class="cv-section">
-            <h2 class="cv-section-title">PROFESSIONAL SUMMARY</h2>
-            <p style="font-size: 0.92rem; color: #374151; line-height: 1.6;">
-              Undergraduate BICT (Hons) student at the University of Vavuniya and an aspiring UI/UX designer with a strong interest in software development. Building skills in translating user needs into clean, intuitive interfaces, and comfortable across the front-end and back-end of a build. Actively involved in tech and community initiatives, with hands-on experience from academic projects, hackathons, and self-directed learning.
-            </p>
-          </div>
-
-          <!-- Education -->
-          <div class="cv-section">
-            <h2 class="cv-section-title">EDUCATION</h2>
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Bachelor of Information &amp; Communication Technology (BICT), Honours</span>
-                <span>2023 – 2028</span>
-              </div>
-              <div class="cv-item-sub">University of Vavuniya, Sri Lanka</div>
-              <ul class="cv-bullets">
-                <li>Overall GPA: 3.7</li>
-                <li>Participated in UI/UX-focused hackathons and design challenges</li>
-                <li>Relevant coursework: Programming Fundamentals (Java, Python, C++, JavaScript), Web Development Technologies, UI/UX Design Principles, Database Management Systems, Human-Computer Interaction (HCI)</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Technical Skills -->
-          <div class="cv-section">
-            <h2 class="cv-section-title">TECHNICAL SKILLS</h2>
-            <ul class="cv-bullets" style="list-style: none; padding-left: 0;">
-              <li style="margin-bottom: 0.4rem;"><strong>Languages:</strong> Java, C++, C#, Python, JavaScript, HTML5, CSS3</li>
-              <li style="margin-bottom: 0.4rem;"><strong>Design:</strong> Figma, UI/UX Design, Wireframing, Prototyping</li>
-              <li style="margin-bottom: 0.4rem;"><strong>Databases &amp; Tools:</strong> MySQL, Git &amp; GitHub, VS Code, MS Office</li>
-              <li style="margin-bottom: 0.4rem;"><strong>Currently Learning:</strong> Advanced UI/UX Design, Full-Stack Web Development, Data Structures &amp; Algorithms</li>
-              <li style="margin-bottom: 0.4rem;"><strong>Soft Skills:</strong> Problem Solving, Team Collaboration, Communication, Time Management, Adaptability</li>
-            </ul>
-          </div>
-
-          <!-- Projects -->
-          <div class="cv-section">
-            <h2 class="cv-section-title">PROJECTS</h2>
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Anime Streaming Website UI</span>
-                <span>Figma / HTML / CSS</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Designed a responsive, visually engaging website UI for browsing and watching anime with a modern layout.</li>
-              </ul>
-            </div>
-
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Secret Garden — Flower Shop</span>
-                <span>Group Project</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Contributed to a group e-commerce project by designing and developing the product page for browsing and purchasing flowers.</li>
-              </ul>
-            </div>
-
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Admin Dashboard UI</span>
-                <span>Figma</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Designed a user-friendly admin dashboard with organized layouts and intuitive data components.</li>
-              </ul>
-            </div>
-
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Food Delivery Website</span>
-                <span>Figma</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Concept website design for browsing and ordering food, focused on clean, user-centered UI/UX.</li>
-              </ul>
-            </div>
-
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Mind Mithra — Mobile App</span>
-                <span>Figma</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Mobile app UI/UX design centered on mental wellness and user support.</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Experience & Activities -->
-          <div class="cv-section">
-            <h2 class="cv-section-title">EXPERIENCE &amp; ACTIVITIES</h2>
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Director of Events</span>
-                <span>ZeroPlastic Vavuniya Community</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Led planning and coordination of environmental sustainability events, overseeing logistics, team coordination, and outreach.</li>
-                <li>Organized awareness programs and led community events.</li>
-              </ul>
-            </div>
-
-            <div class="cv-item">
-              <div class="cv-item-header">
-                <span>Active Volunteer</span>
-                <span>IEEE Community</span>
-              </div>
-              <ul class="cv-bullets">
-                <li>Contributed to organization and execution of IEEE tech-based initiatives, workshops, and events.</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Certifications -->
-          <div class="cv-section">
-            <h2 class="cv-section-title">CERTIFICATIONS</h2>
-            <ul class="cv-bullets">
-              <li>Learn JavaScript (9-hour course) — Scrimba</li>
-              <li>Data Structures and Algorithms — Scrimba</li>
-              <li>Command Line Basics — Scrimba</li>
-              <li>Learn Git and GitHub — Scrimba</li>
-              <li>Intro to NestJS — Scrimba</li>
-              <li>Intro to UI Design Fundamentals — Scrimba</li>
-              <li>Python for Beginners — University of Moratuwa (CODL)</li>
-            </ul>
-          </div>
-        </div>
+      <div class="cv-modal-body cv-pdf-body">
+        <iframe
+          id="cvPdfFrame"
+          class="cv-pdf-frame"
+          title="Mary Rengel Sosai CV"
+          src="Mary_Rengel_Sosai_CV.pdf"
+        ></iframe>
       </div>
     </div>
   </div>
+
+  <!-- Hidden auto-download link for the real CV PDF -->
+  <a id="cvAutoDownloadLink" href="Mary_Rengel_Sosai_CV.pdf" download="Mary_Rengel_Sosai_CV.pdf" hidden aria-hidden="true"></a>
 
   <!-- Scroll to Top Button -->
   <button class="scroll-top-btn" id="scrollTopBtn" aria-label="Scroll to top">↑</button>
@@ -970,6 +852,6 @@
   </div>
 
   <!-- JavaScript -->
-  <script src="js/script.js?v=3"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
