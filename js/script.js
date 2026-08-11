@@ -132,18 +132,22 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = card.querySelector('.cert-name');
 
       if (certModal && modalImg && modalTitle) {
+        // Debug: log click and image source
         const src = img ? img.getAttribute('src') : '';
-        modalImg.src = src;
+        console.log('cert-card clicked:', { src, title: title ? title.textContent : null });
+        // Fallback: check data-src attribute if present
+        const finalSrc = src || (img && img.dataset && img.dataset.src) || '';
+        modalImg.src = finalSrc;
         modalTitle.textContent = title ? title.textContent : 'Certificate Preview';
         // Set view and download links
-        if (viewFullBtn) viewFullBtn.href = src;
+        if (viewFullBtn) viewFullBtn.href = finalSrc;
         if (downloadBtn) {
-          downloadBtn.href = src;
+          downloadBtn.href = finalSrc;
           // Attempt to set a sensible filename for download
           try {
-            const parts = src.split('/');
+            const parts = finalSrc.split('/');
             downloadBtn.setAttribute('download', parts[parts.length - 1]);
-          } catch (e) {}
+          } catch (e) { console.warn('download name set failed', e); }
         }
         certModal.classList.add('active');
         document.body.style.overflow = 'hidden';
