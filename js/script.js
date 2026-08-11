@@ -202,31 +202,90 @@ document.addEventListener('DOMContentLoaded', () => {
   const cvModal = document.getElementById('cvModal');
   const cvModalClose = document.getElementById('cvModalClose');
   const printCvBtn = document.getElementById('printCvBtn');
-
-  document.querySelectorAll('.download-cv-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (cvModal) {
-        cvModal.style.display = 'flex';
-        showToast('📄 Opening Mary Rengel Sosai\'s Official CV...');
-      }
-    });
-  });
+  const backCvBtn = document.getElementById('backCvBtn');
 
   if (cvModalClose && cvModal) {
-    cvModalClose.addEventListener('click', () => {
-      cvModal.style.display = 'none';
-    });
-    cvModal.addEventListener('click', (e) => {
-      if (e.target === cvModal) {
-        cvModal.style.display = 'none';
-      }
+    cvModalClose.addEventListener('click', () => { cvModal.style.display = 'none'; document.body.style.overflow = ''; });
+    cvModal.addEventListener('click', (e) => { if (e.target === cvModal) { cvModal.style.display = 'none'; document.body.style.overflow = ''; } });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && cvModal.style.display === 'flex') { cvModal.style.display = 'none'; document.body.style.overflow = ''; } });
+  }
+
+  if (backCvBtn) {
+    backCvBtn.addEventListener('click', () => {
+      if (cvModal) { cvModal.style.display = 'none'; document.body.style.overflow = ''; }
+      const cvSection = document.getElementById('cv');
+      if (cvSection) setTimeout(() => cvSection.scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
     });
   }
 
   if (printCvBtn) {
-    printCvBtn.addEventListener('click', () => {
-      window.print();
+    printCvBtn.addEventListener('click', () => { window.print(); });
+  }
+
+  // Download CV — always save to device; never open PDF in the browser
+  const downloadCvBtn = document.getElementById('downloadCvBtn');
+  if (downloadCvBtn) {
+    const cvFileName = 'Mary_Rengel_Sosai_CV.pdf';
+    const cvUrl = new URL(cvFileName, window.location.href).href;
+
+    const fetchCvBlob = () => new Promise((resolve, reject) => {
+      fetch(cvUrl)
+        .then((response) => {
+          if (!response.ok) throw new Error('fetch failed');
+          return response.arrayBuffer();
+        })
+        .then((buffer) => resolve(new Blob([buffer], { type: 'application/octet-stream' })))
+        .catch(() => {
+          const xhr = new XMLHttpRequest();
+          xhr.open('GET', cvUrl, true);
+          xhr.responseType = 'arraybuffer';
+          xhr.onload = () => {
+            if (xhr.status === 200 || xhr.status === 0) {
+              resolve(new Blob([xhr.response], { type: 'application/octet-stream' }));
+            } else {
+              reject(new Error('xhr failed'));
+            }
+          };
+          xhr.onerror = () => reject(new Error('xhr error'));
+          xhr.send();
+        });
+    });
+
+    const saveBlobToDevice = (blob) => {
+      if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob, cvFileName, false);
+        return;
+      }
+
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = blobUrl;
+      link.download = cvFileName;
+      link.type = 'application/octet-stream';
+      link.style.display = 'none';
+      document.body.appendChild(link);
+      link.dispatchEvent(new MouseEvent('click', { bubbles: false, cancelable: true, view: window }));
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(link);
+      }, 1500);
+    };
+
+    downloadCvBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      downloadCvBtn.disabled = true;
+
+      try {
+        const blob = await fetchCvBlob();
+        saveBlobToDevice(blob);
+        showToast(`✅ Download started: ${cvFileName}`, 'success');
+      } catch {
+        showToast('⚠️ Could not download CV. Open the site via a local server and try again.', 'warning');
+      } finally {
+        downloadCvBtn.disabled = false;
+      }
     });
   }
 
