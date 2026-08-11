@@ -1699,6 +1699,15 @@ button, input, textarea {
   width: 100%;
 }
 
+/* Ensure modal action buttons are centered */
+.modal-actions {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
 #modalImg {
   max-width: 100%;
   max-height: 72vh;
