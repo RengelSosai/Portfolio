@@ -119,6 +119,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const modalImg = document.getElementById('modalImg');
   const modalTitle = document.getElementById('modalTitle');
   const modalClose = document.getElementById('modalClose');
+  const viewFullBtn = document.getElementById('viewFullBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
 
   document.querySelectorAll('.cert-card').forEach(card => {
     card.addEventListener('mouseenter', () => {
@@ -130,8 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
       const title = card.querySelector('.cert-name');
 
       if (certModal && modalImg && modalTitle) {
-        modalImg.src = img ? img.src : '';
+        const src = img ? img.getAttribute('src') : '';
+        modalImg.src = src;
         modalTitle.textContent = title ? title.textContent : 'Certificate Preview';
+        // Set view and download links
+        if (viewFullBtn) viewFullBtn.href = src;
+        if (downloadBtn) {
+          downloadBtn.href = src;
+          // Attempt to set a sensible filename for download
+          try {
+            const parts = src.split('/');
+            downloadBtn.setAttribute('download', parts[parts.length - 1]);
+          } catch (e) {}
+        }
         certModal.classList.add('active');
         document.body.style.overflow = 'hidden';
       }

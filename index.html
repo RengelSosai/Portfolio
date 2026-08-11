@@ -954,10 +954,14 @@
   <!-- Certificate Lightbox Modal -->
   <div class="modal" id="certModal">
     <div class="modal-content">
-      <span class="modal-close" id="modalClose">&times;</span>
-      <div style="padding: 2rem; text-align: center;">
-        <h3 id="modalTitle" style="margin-bottom: 1rem; font-size: 1.5rem; color: var(--text-dark);">Certificate Preview</h3>
-        <img id="modalImg" src="" alt="Certificate" style="max-height: 500px; margin: 0 auto; border-radius: 8px; box-shadow: var(--shadow-md);">
+      <button class="modal-close" id="modalClose" aria-label="Close Preview" title="Close Preview">&times;</button>
+      <h3 id="modalTitle">Certificate Preview</h3>
+      <div class="modal-img-wrap">
+        <img id="modalImg" src="" alt="Certificate Preview">
+      </div>
+      <div class="modal-actions" style="display:flex; gap:0.5rem; justify-content:center; margin-top:1rem;">
+        <a id="viewFullBtn" class="btn-project-action" target="_blank" rel="noopener" style="padding:0.5rem 0.75rem; border-radius:8px; background:#0f62fe; color:white; text-decoration:none;">View Full</a>
+        <a id="downloadBtn" class="btn-project-action" style="padding:0.5rem 0.75rem; border-radius:8px; background:#10b981; color:white; text-decoration:none;">Download</a>
       </div>
     </div>
   </div>
